@@ -1,0 +1,28 @@
+lockfileVersion: '6.0'
+
+dependencies:
+  '@trpc/server':
+    specifier: ^10.37.1
+    version: 10.37.1
+  zod:
+    specifier: ^3.0.0
+    version: 3.0.0
+
+devDependencies:
+  '@types/node':
+    specifier: ^18.16.16
+    version: 18.16.16
+
+packages:
+
+  /@trpc/server@10.37.1:
+    resolution: {integrity: sha512-r3VeA319/braYMBIzj+XLgLKQ9lJSVglvPvP9HUv4kr5w6Y5grQMxMcExhTiZWltE9bnSJHKtBBzHafOo7KC8A==}
+    dev: false
+
+  /@types/node@18.16.16:
+    resolution: {integrity: sha512-NpaM49IGQQAUlBhHMF82QH80J08os4ZmyF9MkpCzWAGuOHqE4gTEbhzd7L3l5LmWuZ6E0OiC1FweQ4tsiW35+g==}
+    dev: true
+
+  /zod@3.0.0:
+    resolution: {integrity: sha512-4DBG6siN02ooPB1yvEEqoe32maHzKEdGgtQ2HEz6FnFtgTjwZtzJ3ScuiDgtssWfDyLnQ3MvtSj6ff5ANL4STw==}
+    dev: false
