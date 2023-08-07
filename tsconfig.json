@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "esnext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist"
   },
-  "include": ["server", "client"]
+  "include": ["server", "serviceAuth"]
 }
