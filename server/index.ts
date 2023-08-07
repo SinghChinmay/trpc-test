@@ -19,8 +19,7 @@ const createContext = ({
   };
 };
 
-// Define the application router with tRPC procedures
-export const appRouter = router({
+const routesForTrpc = {
   // Define a userList procedure for getting all users
   userList: publicProcedure.query(async () => {
     // Retrieve users from the database
@@ -41,6 +40,7 @@ export const appRouter = router({
         name: z.string(), // The user's name must be a string
         age: z.number(), // The user's age must be a number
         gender: z.enum(['M', 'F']), // The user's gender must be either 'M' or 'F'
+        phone: z.string(), // The user's phone number is optional
       }),
     )
     .mutation(async (opts) => {
@@ -49,7 +49,22 @@ export const appRouter = router({
       const user = await db.user.create(input);
       return user;
     }),
-});
+  deleteUser: publicProcedure
+    .input(
+      z.object({
+        id: z.string(), // The user's name must be a string
+      }),
+    )
+    .mutation(async (opts) => {
+      const { input } = opts;
+      // Create a new user in the database with the provided input
+      const user = await db.user.delete(input);
+      return user;
+    }),
+};
+
+// Define the application router with tRPC procedures
+export const appRouter = router(routesForTrpc);
 
 export type AppRouter = typeof appRouter;
 
@@ -70,6 +85,20 @@ app.use(
     createContext, // The defined context function
   }),
 );
+
+// check if cookie is set auth=true
+app.use((req: any, res, next) => {
+  if (req.cookies?.auth) {
+    req.user = {
+      id: '1',
+      name: 'sachinraja',
+      age: 25,
+    };
+
+    next();
+  }
+  res.redirect('/login');
+});
 
 // Define a root route for the application
 app.get('/', (req, res) => {

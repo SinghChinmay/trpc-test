@@ -27,6 +27,7 @@ async function main() {
     name: 'sachinraja',
     age: 25,
     gender: 'M',
+    phone: '',
   });
 
   // Logging the newly created user to the console
