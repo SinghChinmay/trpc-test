@@ -1,10 +1,13 @@
-import { z } from 'zod';
-import { db } from './db';
-import { publicProcedure, router } from './trpc';
-import { inferAsyncReturnType, initTRPC } from '@trpc/server';
-import * as trpcExpress from '@trpc/server/adapters/express';
-import express from 'express';
+// Importing necessary libraries and modules
+import { z } from 'zod'; // For schema validation
+import { db } from './db'; // Database connection
+import { publicProcedure, router } from './trpc'; // tRPC server-side utilities
+import { inferAsyncReturnType, initTRPC } from '@trpc/server'; // tRPC initialization
+import * as trpcExpress from '@trpc/server/adapters/express'; // tRPC Express adapter
+import express from 'express'; // Express.js web server
 
+// Create a context function for tRPC, which provides additional data for each request
+// Here it provides the request, response, and database connection
 const createContext = ({
   req,
   res,
@@ -16,28 +19,33 @@ const createContext = ({
   };
 };
 
+// Define the application router with tRPC procedures
 export const appRouter = router({
+  // Define a userList procedure for getting all users
   userList: publicProcedure.query(async () => {
-    // Retrieve users from a datasource, this is an imaginary database
+    // Retrieve users from the database
     const users = await db.user.findMany();
     return users;
   }),
+  // Define a userById procedure for getting a user by ID
   userById: publicProcedure.input(z.string()).query(async (opts) => {
     const { input } = opts;
-    // Retrieve the user with the given ID
+    // Retrieve the user with the given ID from the database
     const user = await db.user.findById(input);
     return user;
   }),
+  // Define a userCreate procedure for creating a new user
   userCreate: publicProcedure
     .input(
       z.object({
-        name: z.string(),
-        age: z.number(),
-        gender: z.enum(['M', 'F']), // 'M' for male, 'F' for female
+        name: z.string(), // The user's name must be a string
+        age: z.number(), // The user's age must be a number
+        gender: z.enum(['M', 'F']), // The user's gender must be either 'M' or 'F'
       }),
     )
     .mutation(async (opts) => {
       const { input } = opts;
+      // Create a new user in the database with the provided input
       const user = await db.user.create(input);
       return user;
     }),
@@ -47,19 +55,23 @@ export type AppRouter = typeof appRouter;
 
 type Context = inferAsyncReturnType<typeof createContext>;
 
-// Create a new TRPC instance
+// Initialize a new tRPC instance with the defined context
 const t = initTRPC.context<Context>().create();
 
+// Initialize a new Express application
 const app = express();
 
+// Use the tRPC Express middleware for the '/trpc' route
+// This allows the application to handle tRPC requests
 app.use(
   '/trpc',
   trpcExpress.createExpressMiddleware({
-    router: appRouter,
-    createContext,
+    router: appRouter, // The defined tRPC router
+    createContext, // The defined context function
   }),
 );
 
+// Define a root route for the application
 app.get('/', (req, res) => {
   res.send(`
     <h1>TRPC Example</h1>
@@ -69,6 +81,7 @@ app.get('/', (req, res) => {
   `);
 });
 
+// Start the Express server on port 3000
 app.listen(3000, () => {
-  console.log('Listening on http://localhost:3000/trpc');
+  console.log('Listening on http://localhost:3000/trpc'); // Log that the server is running
 });
